@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<title>タブURLをNotionに貼り付け - 設定</title>
+<style>
+  body {
+    font-family: -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN", sans-serif;
+    max-width: 480px;
+    margin: 24px auto;
+    padding: 0 16px;
+    color: #222;
+  }
+  h1 { font-size: 18px; }
+  label { display: block; margin-top: 16px; font-weight: bold; font-size: 13px; }
+  .hint { font-weight: normal; color: #666; font-size: 12px; margin-top: 2px; }
+  input[type="text"], input[type="password"], textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    margin-top: 4px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  textarea { min-height: 100px; resize: vertical; }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+  .checkbox-row label { margin: 0; font-weight: normal; }
+  button {
+    margin-top: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    background: #2e7dff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover { background: #1f66d6; }
+  #status { margin-top: 12px; font-size: 12px; color: #22a55e; height: 16px; }
+</style>
+</head>
+<body>
+  <h1>タブURLをNotionに貼り付け - 設定</h1>
+
+  <label for="notionToken">Notion Integration Secret
+    <div class="hint">https://www.notion.so/my-integrations で作成したInternal Integrationのシークレットを貼り付けてください。</div>
+  </label>
+  <input type="password" id="notionToken" placeholder="ntn_..." />
+
+  <label for="notionPageUrl">貼り付け先NotionページのURL
+    <div class="hint">対象ページをそのIntegrationと共有（コネクト）しておく必要があります。</div>
+  </label>
+  <input type="text" id="notionPageUrl" placeholder="https://www.notion.so/..." />
+
+  <label for="textChannelNames">テキストで貼り付けるチャンネル名（1行に1つ）
+    <div class="hint">ここに書いたチャンネル名のタブはURLをテキストとしてコードブロックに追記します。それ以外はブックマークとして追記します。</div>
+  </label>
+  <textarea id="textChannelNames" placeholder="チャンネル名A&#10;チャンネル名B"></textarea>
+
+  <div class="checkbox-row">
+    <input type="checkbox" id="includeNonYoutubeTabs" />
+    <label for="includeNonYoutubeTabs">YouTube以外のサイトのタブもブックマークとして保存する</label>
+  </div>
+  <div class="hint" style="margin-top: 2px;">オフにすると、YouTube以外のタブは無視されます（Notionに保存されず、閉じられもしません）。</div>
+
+  <div class="checkbox-row">
+    <input type="checkbox" id="closeTabsAfter" />
+    <label for="closeTabsAfter">貼り付け後に対象タブを閉じる</label>
+  </div>
+
+  <button id="save">保存</button>
+  <div id="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "タブURLをNotionに貼り付け",
+  "version": "1.0.0",
+  "description": "YouTube登録チャンネル一覧タブより右のタブのURLを、Notionページに貼り付けます。",
+  "permissions": ["tabs", "storage", "notifications"],
+  "host_permissions": ["https://api.notion.com/*", "https://www.youtube.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "対象タブのURLをNotionに貼り付け",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
