@@ -70,26 +70,24 @@ async function run() {
   const classifications = await Promise.all(
     targetTabs.map(async (tab) => {
       let channelName = "";
-      let title = "";
       if (isYoutubeUrl(tab.url)) {
         const info = await getYoutubeOEmbed(tab.url);
         channelName = (info.author_name || "").normalize("NFKC").trim().toLowerCase();
-        title = (info.title || "").normalize("NFKC").trim();
       }
       const isTextMatch = Boolean(
         channelName && channelNames.some((name) => channelName.includes(name))
       );
-      return { url: tab.url, isTextMatch, title };
+      return { url: tab.url, isTextMatch };
     })
   );
 
   const textUrls = [];
-  const bookmarkItems = [];
-  for (const { url, isTextMatch, title } of classifications) {
+  const bookmarkUrls = [];
+  for (const { url, isTextMatch } of classifications) {
     if (isTextMatch) {
       textUrls.push(url);
     } else {
-      bookmarkItems.push({ url, caption: title });
+      bookmarkUrls.push(url);
     }
   }
 
@@ -97,7 +95,7 @@ async function run() {
     token: settings.notionToken,
     pageId,
     textUrls,
-    bookmarkItems,
+    bookmarkUrls,
   });
 
   if (closeTabsAfter) {
@@ -112,7 +110,7 @@ async function run() {
   const skippedNote = skippedCount > 0 ? ` / 対象外(非YouTube)で無視: ${skippedCount}件` : "";
   notify(
     "Notionに貼り付けました",
-    `テキスト: ${textUrls.length}件 / ブックマーク: ${bookmarkItems.length}件${skippedNote}`
+    `テキスト: ${textUrls.length}件 / ブックマーク: ${bookmarkUrls.length}件${skippedNote}`
   );
 }
 
@@ -238,9 +236,9 @@ async function chunkedInsertChildren(token, pageId, children, afterId) {
   }
 }
 
-async function appendToNotion({ token, pageId, textUrls, bookmarkItems }) {
+async function appendToNotion({ token, pageId, textUrls, bookmarkUrls }) {
   let children = null;
-  if (textUrls.length > 0 || bookmarkItems.length > 0) {
+  if (textUrls.length > 0 || bookmarkUrls.length > 0) {
     children = await getAllChildren(token, pageId);
   }
 
@@ -262,7 +260,7 @@ async function appendToNotion({ token, pageId, textUrls, bookmarkItems }) {
     });
   }
 
-  if (bookmarkItems.length > 0) {
+  if (bookmarkUrls.length > 0) {
     // 既存の一番上のブックマークの直前に挿入。既存ブックマークが無ければページ末尾に追加。
     const firstBookmarkIndex = children.findIndex((b) => b.type === "bookmark");
     let anchorId;
@@ -274,13 +272,10 @@ async function appendToNotion({ token, pageId, textUrls, bookmarkItems }) {
       );
     }
     // 右のタブが上、左のタブが下になるよう順序を反転する
-    const orderedItems = [...bookmarkItems].reverse();
-    const bookmarkChildren = orderedItems.map(({ url, caption }) => ({
+    const orderedUrls = [...bookmarkUrls].reverse();
+    const bookmarkChildren = orderedUrls.map((url) => ({
       type: "bookmark",
-      bookmark: {
-        url,
-        caption: caption ? [{ type: "text", text: { content: caption } }] : [],
-      },
+      bookmark: { url },
     }));
     await chunkedInsertChildren(token, pageId, bookmarkChildren, anchorId);
   }
