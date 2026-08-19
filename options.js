@@ -2,9 +2,10 @@ const fields = {
   notionToken: document.getElementById("notionToken"),
   notionPageUrl: document.getElementById("notionPageUrl"),
   textChannelNames: document.getElementById("textChannelNames"),
-  closeTabsAfter: document.getElementById("closeTabsAfter"),
-  includeNonYoutubeTabs: document.getElementById("includeNonYoutubeTabs"),
+  closeTabsAfterText: document.getElementById("closeTabsAfterText"),
   pasteUnmatchedAsBookmark: document.getElementById("pasteUnmatchedAsBookmark"),
+  includeNonYoutubeTabs: document.getElementById("includeNonYoutubeTabs"),
+  closeTabsAfterBookmark: document.getElementById("closeTabsAfterBookmark"),
 };
 const statusEl = document.getElementById("status");
 
@@ -13,16 +14,18 @@ async function load() {
     "notionToken",
     "notionPageUrl",
     "textChannelNames",
-    "closeTabsAfter",
-    "includeNonYoutubeTabs",
+    "closeTabsAfterText",
     "pasteUnmatchedAsBookmark",
+    "includeNonYoutubeTabs",
+    "closeTabsAfterBookmark",
   ]);
   fields.notionToken.value = settings.notionToken || "";
   fields.notionPageUrl.value = settings.notionPageUrl || "";
   fields.textChannelNames.value = settings.textChannelNames || "";
-  fields.closeTabsAfter.checked = settings.closeTabsAfter !== false;
-  fields.includeNonYoutubeTabs.checked = settings.includeNonYoutubeTabs !== false;
+  fields.closeTabsAfterText.checked = settings.closeTabsAfterText !== false;
   fields.pasteUnmatchedAsBookmark.checked = settings.pasteUnmatchedAsBookmark !== false;
+  fields.includeNonYoutubeTabs.checked = settings.includeNonYoutubeTabs !== false;
+  fields.closeTabsAfterBookmark.checked = settings.closeTabsAfterBookmark !== false;
 }
 
 async function save() {
@@ -30,9 +33,10 @@ async function save() {
     notionToken: fields.notionToken.value.trim(),
     notionPageUrl: fields.notionPageUrl.value.trim(),
     textChannelNames: fields.textChannelNames.value,
-    closeTabsAfter: fields.closeTabsAfter.checked,
-    includeNonYoutubeTabs: fields.includeNonYoutubeTabs.checked,
+    closeTabsAfterText: fields.closeTabsAfterText.checked,
     pasteUnmatchedAsBookmark: fields.pasteUnmatchedAsBookmark.checked,
+    includeNonYoutubeTabs: fields.includeNonYoutubeTabs.checked,
+    closeTabsAfterBookmark: fields.closeTabsAfterBookmark.checked,
   });
   statusEl.textContent = "保存しました";
   setTimeout(() => (statusEl.textContent = ""), 2000);

@@ -26,6 +26,22 @@
   textarea { min-height: 100px; resize: vertical; }
   .checkbox-row { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
   .checkbox-row label { margin: 0; font-weight: normal; }
+  fieldset {
+    margin-top: 20px;
+    padding: 4px 14px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  fieldset:first-of-type { margin-top: 24px; }
+  legend {
+    padding: 0 6px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  fieldset label:first-child,
+  fieldset .checkbox-row:first-child {
+    margin-top: 12px;
+  }
   button {
     margin-top: 20px;
     padding: 8px 16px;
@@ -53,27 +69,40 @@
   </label>
   <input type="text" id="notionPageUrl" placeholder="https://www.notion.so/..." />
 
-  <label for="textChannelNames">テキストで貼り付けるチャンネル名（1行に1つ）
-    <div class="hint">ここに書いたチャンネル名のタブはURLをテキストとしてコードブロックに追記します。それ以外はブックマークとして追記します。</div>
-  </label>
-  <textarea id="textChannelNames" placeholder="チャンネル名A&#10;チャンネル名B"></textarea>
+  <fieldset>
+    <legend>指定したチャンネル（テキストとして貼り付け）</legend>
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="pasteUnmatchedAsBookmark" />
-    <label for="pasteUnmatchedAsBookmark">指定していないチャンネルはブックマークとして貼り付ける</label>
-  </div>
-  <div class="hint" style="margin-top: 2px;">※Notion API経由で作成するブックマークにはサムネイル画像は表示されません（URLのみのシンプルな表示になります）。オフにすると、指定していないチャンネルのタブは無視されます（Notionに保存されず、閉じられもしません）。</div>
+    <label for="textChannelNames">テキストで貼り付けるチャンネル名（1行に1つ）
+      <div class="hint">ここに書いたチャンネル名を含むタブは、URLをテキストとしてコードブロックに追記します。</div>
+    </label>
+    <textarea id="textChannelNames" placeholder="チャンネル名A&#10;チャンネル名B"></textarea>
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="includeNonYoutubeTabs" />
-    <label for="includeNonYoutubeTabs">YouTube以外のサイトのタブもブックマークとして保存する</label>
-  </div>
-  <div class="hint" style="margin-top: 2px;">オフにすると、YouTube以外のタブは無視されます（Notionに保存されず、閉じられもしません）。</div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="closeTabsAfterText" />
+      <label for="closeTabsAfterText">貼り付け後にタブを閉じる</label>
+    </div>
+  </fieldset>
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="closeTabsAfter" />
-    <label for="closeTabsAfter">貼り付け後に対象タブを閉じる</label>
-  </div>
+  <fieldset>
+    <legend>指定していないチャンネル（ブックマークとして貼り付け）</legend>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="pasteUnmatchedAsBookmark" />
+      <label for="pasteUnmatchedAsBookmark">指定していないチャンネルはブックマークとして貼り付ける</label>
+    </div>
+    <div class="hint" style="margin-top: 2px;">※Notion API経由で作成するブックマークにはサムネイル画像は表示されません（URLのみのシンプルな表示になります）。オフにすると、指定していないチャンネルのタブは無視されます（Notionに保存されず、閉じられもしません）。</div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="includeNonYoutubeTabs" />
+      <label for="includeNonYoutubeTabs">YouTube以外のサイトのタブもブックマークとして保存する</label>
+    </div>
+    <div class="hint" style="margin-top: 2px;">オフにすると、YouTube以外のタブは無視されます（Notionに保存されず、閉じられもしません）。</div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="closeTabsAfterBookmark" />
+      <label for="closeTabsAfterBookmark">貼り付け後にタブを閉じる</label>
+    </div>
+  </fieldset>
 
   <button id="save">保存</button>
   <div id="status"></div>

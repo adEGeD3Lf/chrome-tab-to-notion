@@ -15,9 +15,10 @@ async function run() {
     "notionToken",
     "notionPageUrl",
     "textChannelNames",
-    "closeTabsAfter",
+    "closeTabsAfterText",
     "includeNonYoutubeTabs",
     "pasteUnmatchedAsBookmark",
+    "closeTabsAfterBookmark",
   ]);
 
   if (!settings.notionToken || !settings.notionPageUrl) {
@@ -38,7 +39,8 @@ async function run() {
     .filter(Boolean)
     .map((s) => s.toLowerCase());
 
-  const closeTabsAfter = settings.closeTabsAfter !== false;
+  const closeTabsAfterText = settings.closeTabsAfterText !== false;
+  const closeTabsAfterBookmark = settings.closeTabsAfterBookmark !== false;
   const includeNonYoutubeTabs = settings.includeNonYoutubeTabs !== false;
   const pasteUnmatchedAsBookmark = settings.pasteUnmatchedAsBookmark !== false;
 
@@ -85,15 +87,16 @@ async function run() {
 
   const textUrls = [];
   const bookmarkUrls = [];
-  const handledTabIds = [];
+  const textTabIds = [];
+  const bookmarkTabIds = [];
   let unmatchedSkippedCount = 0;
   for (const { tab, isTextMatch } of classifications) {
     if (isTextMatch) {
       textUrls.push(tab.url);
-      handledTabIds.push(tab.id);
+      textTabIds.push(tab.id);
     } else if (pasteUnmatchedAsBookmark) {
       bookmarkUrls.push(tab.url);
-      handledTabIds.push(tab.id);
+      bookmarkTabIds.push(tab.id);
     } else {
       unmatchedSkippedCount++;
     }
@@ -106,8 +109,12 @@ async function run() {
     bookmarkUrls,
   });
 
-  if (closeTabsAfter && handledTabIds.length > 0) {
-    await chrome.tabs.remove(handledTabIds);
+  const tabIdsToClose = [
+    ...(closeTabsAfterText ? textTabIds : []),
+    ...(closeTabsAfterBookmark ? bookmarkTabIds : []),
+  ];
+  if (tabIdsToClose.length > 0) {
+    await chrome.tabs.remove(tabIdsToClose);
   }
 
   chrome.action.setBadgeText({ text: "OK" });
