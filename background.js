@@ -17,6 +17,7 @@ async function run() {
     "textChannelNames",
     "closeTabsAfter",
     "includeNonYoutubeTabs",
+    "pasteUnmatchedAsBookmark",
   ]);
 
   if (!settings.notionToken || !settings.notionPageUrl) {
@@ -39,6 +40,7 @@ async function run() {
 
   const closeTabsAfter = settings.closeTabsAfter !== false;
   const includeNonYoutubeTabs = settings.includeNonYoutubeTabs !== false;
+  const pasteUnmatchedAsBookmark = settings.pasteUnmatchedAsBookmark !== false;
 
   chrome.action.setBadgeText({ text: "..." });
   chrome.action.setBadgeBackgroundColor({ color: "#2e7dff" });
@@ -77,17 +79,23 @@ async function run() {
       const isTextMatch = Boolean(
         channelName && channelNames.some((name) => channelName.includes(name))
       );
-      return { url: tab.url, isTextMatch };
+      return { tab, isTextMatch };
     })
   );
 
   const textUrls = [];
   const bookmarkUrls = [];
-  for (const { url, isTextMatch } of classifications) {
+  const handledTabIds = [];
+  let unmatchedSkippedCount = 0;
+  for (const { tab, isTextMatch } of classifications) {
     if (isTextMatch) {
-      textUrls.push(url);
+      textUrls.push(tab.url);
+      handledTabIds.push(tab.id);
+    } else if (pasteUnmatchedAsBookmark) {
+      bookmarkUrls.push(tab.url);
+      handledTabIds.push(tab.id);
     } else {
-      bookmarkUrls.push(url);
+      unmatchedSkippedCount++;
     }
   }
 
@@ -98,8 +106,8 @@ async function run() {
     bookmarkUrls,
   });
 
-  if (closeTabsAfter) {
-    await chrome.tabs.remove(targetTabs.map((t) => t.id));
+  if (closeTabsAfter && handledTabIds.length > 0) {
+    await chrome.tabs.remove(handledTabIds);
   }
 
   chrome.action.setBadgeText({ text: "OK" });
@@ -107,7 +115,10 @@ async function run() {
   setTimeout(() => chrome.action.setBadgeText({ text: "" }), 4000);
 
   const skippedCount = candidateTabs.length - targetTabs.length;
-  const skippedNote = skippedCount > 0 ? ` / 対象外(非YouTube)で無視: ${skippedCount}件` : "";
+  const notes = [];
+  if (skippedCount > 0) notes.push(`対象外(非YouTube)で無視: ${skippedCount}件`);
+  if (unmatchedSkippedCount > 0) notes.push(`未指定チャンネルで無視: ${unmatchedSkippedCount}件`);
+  const skippedNote = notes.length > 0 ? ` / ${notes.join(" / ")}` : "";
   notify(
     "Notionに貼り付けました",
     `テキスト: ${textUrls.length}件 / ブックマーク: ${bookmarkUrls.length}件${skippedNote}`

@@ -59,6 +59,12 @@
   <textarea id="textChannelNames" placeholder="チャンネル名A&#10;チャンネル名B"></textarea>
 
   <div class="checkbox-row">
+    <input type="checkbox" id="pasteUnmatchedAsBookmark" />
+    <label for="pasteUnmatchedAsBookmark">指定していないチャンネルはブックマークとして貼り付ける</label>
+  </div>
+  <div class="hint" style="margin-top: 2px;">※Notion API経由で作成するブックマークにはサムネイル画像は表示されません（URLのみのシンプルな表示になります）。オフにすると、指定していないチャンネルのタブは無視されます（Notionに保存されず、閉じられもしません）。</div>
+
+  <div class="checkbox-row">
     <input type="checkbox" id="includeNonYoutubeTabs" />
     <label for="includeNonYoutubeTabs">YouTube以外のサイトのタブもブックマークとして保存する</label>
   </div>

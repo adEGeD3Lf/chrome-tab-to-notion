@@ -4,6 +4,7 @@ const fields = {
   textChannelNames: document.getElementById("textChannelNames"),
   closeTabsAfter: document.getElementById("closeTabsAfter"),
   includeNonYoutubeTabs: document.getElementById("includeNonYoutubeTabs"),
+  pasteUnmatchedAsBookmark: document.getElementById("pasteUnmatchedAsBookmark"),
 };
 const statusEl = document.getElementById("status");
 
@@ -14,12 +15,14 @@ async function load() {
     "textChannelNames",
     "closeTabsAfter",
     "includeNonYoutubeTabs",
+    "pasteUnmatchedAsBookmark",
   ]);
   fields.notionToken.value = settings.notionToken || "";
   fields.notionPageUrl.value = settings.notionPageUrl || "";
   fields.textChannelNames.value = settings.textChannelNames || "";
   fields.closeTabsAfter.checked = settings.closeTabsAfter !== false;
   fields.includeNonYoutubeTabs.checked = settings.includeNonYoutubeTabs !== false;
+  fields.pasteUnmatchedAsBookmark.checked = settings.pasteUnmatchedAsBookmark !== false;
 }
 
 async function save() {
@@ -29,6 +32,7 @@ async function save() {
     textChannelNames: fields.textChannelNames.value,
     closeTabsAfter: fields.closeTabsAfter.checked,
     includeNonYoutubeTabs: fields.includeNonYoutubeTabs.checked,
+    pasteUnmatchedAsBookmark: fields.pasteUnmatchedAsBookmark.checked,
   });
   statusEl.textContent = "保存しました";
   setTimeout(() => (statusEl.textContent = ""), 2000);
